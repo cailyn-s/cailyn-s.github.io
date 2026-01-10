@@ -15,3 +15,41 @@
 <meta name="theme-color" content="#ffffff"/>
 
 <!-- end custom head snippets -->
+
+<style>
+	/* Project excerpt paragraphs and their media */
+	.archive__item-excerpt {
+		font-size: inherit;
+	}
+
+	/* Make images/videos in project excerpts smaller consistently */
+	.archive__item-excerpt img,
+	.archive__item-excerpt video,
+	p.archive__item-excerpt img,
+	p.archive__item-excerpt video {
+		width: 220px !important;
+		max-width: 220px !important;
+		min-width: auto !important;
+		height: auto !important;
+		display: block !important;
+		margin: 0.5rem auto !important;
+	}
+
+	/* If multiple media sit inline, add spacing */
+	.archive__item-excerpt img + img,
+	.archive__item-excerpt video + video,
+	.archive__item-excerpt img + video,
+	.archive__item-excerpt video + img {
+		margin-top: 0.5rem !important;
+	}
+
+	/* Project titles: remove link-like hover effect when not links */
+	.archive__item-title {
+		cursor: default;
+	}
+	.archive__item-title a:hover {
+		text-decoration: none;
+	}
+		text-decoration: none;
+	}
+</style>
