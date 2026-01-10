@@ -46,9 +46,16 @@
 	/* Project titles: remove link-like hover effect when not links */
 	.archive__item-title {
 		cursor: default;
+		text-decoration: none !important;
+	}
+	.archive__item-title:hover {
+		text-decoration: none !important;
+	}
+	.archive__item-title a {
+		text-decoration: none !important;
 	}
 	.archive__item-title a:hover {
-		text-decoration: none;
+		text-decoration: none !important;
 	}
 		text-decoration: none;
 	}
