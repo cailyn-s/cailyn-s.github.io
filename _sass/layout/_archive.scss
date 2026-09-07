@@ -243,3 +243,184 @@
     }
   }
 }
+
+/* Projects: subtitle line under the title */
+.archive__item-subtitle {
+  margin: 0 0 0.5em;
+  font-size: $type-size-6;
+  font-style: italic;
+  /* muted via opacity rather than --global-text-color-light, which is
+     #bdc1c4 in the light theme and too low-contrast at this size */
+  color: var(--global-text-color);
+  opacity: 0.8;
+}
+
+/* Projects: anchor targets, so /projects/#some-project scrolls the entry
+   clear of the fixed masthead */
+.project-entry {
+  scroll-margin-top: $masthead-height + 20px;
+}
+
+/* Projects: bulleted excerpts */
+.project-entry .archive__item-excerpt {
+  ul {
+    margin: 0.25em 0 0;
+    padding-left: 1.5em;
+  }
+
+  li {
+    margin-bottom: 0.25em;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* Projects: details block — supporting text under the abstract, one step down
+   in size so the abstract stays the lead */
+.project-details {
+  margin: 0.9em 0 0;
+  /* deliberately between $type-size-7 (0.6875em) and the excerpt's
+     $type-size-6 (0.75em) -- larger than a footnote, still clearly secondary */
+  font-size: 0.72em;
+  line-height: 1.6;
+
+  p {
+    margin: 0 0 0.6em;
+  }
+
+  ul {
+    margin: 0.4em 0 0.6em;
+    padding-left: 1.5em;
+  }
+
+  li {
+    margin-bottom: 0.2em;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* Opt a project's details block up to the excerpt's size via
+   `details_same_size: true` in its front matter */
+.project-details--match {
+  font-size: $type-size-6;
+}
+
+/* Projects: media rows. Each row is a flex line, so items listed together in
+   one row sit side by side and share the width evenly. */
+.project-media {
+  margin: 1.2em 0 0;
+}
+
+.project-media__row {
+  margin-left: auto;   /* keep a width-capped row centred */
+  margin-right: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.75em;
+  margin-bottom: 0.75em;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.project-media__item {
+  flex: 1 1 0;
+  min-width: 0; /* let items shrink below their intrinsic width */
+  margin: 0;
+  max-width: 100%;
+  /* the theme sets figure{display:flex}, which shrink-wraps <figcaption> to its
+     text and pins it left, so text-align:center had nothing to centre */
+  display: block;
+}
+
+.project-media__video,
+.project-media__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: $border-radius;
+}
+
+.project-media__caption {
+  margin-top: 0.4em;
+  margin-bottom: 0;
+  width: 100%;
+  font-family: $sans-serif; /* the theme's base figcaption is Georgia serif */
+  font-size: $type-size-7;
+  line-height: 1.35;
+  text-align: center;
+  opacity: 0.85;
+}
+
+/* Between phone and desktop the column is too narrow for 4 across, so let rows
+   of 3+ fall to two per line */
+@media (min-width: 37.5625em) and (max-width: 57.8125em) {
+  .project-media__item {
+    flex: 1 1 calc(50% - 0.375em);
+  }
+}
+
+/* Stack side-by-side media on narrow screens */
+@media (max-width: 37.5em) {
+  .project-media__row {
+    flex-direction: column;
+  }
+
+  .project-media__item {
+    flex: 1 1 auto !important; /* override per-item width overrides */
+    width: 100%;
+  }
+}
+
+
+/* Projects: horizontal jump menu at the top of /projects/ */
+.project-nav {
+  margin: 0 0 2em;
+  padding-bottom: 0.8em;
+  border-bottom: 1px solid var(--global-border-color);
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    /* set here rather than on the links so the separators scale with them */
+    font-size: 0.875em;
+  }
+
+  li {
+    display: flex;
+    align-items: baseline;
+    margin: 0;
+  }
+
+  /* dot between entries, not after the last one */
+  li:not(:last-child)::after {
+    content: "\00b7";
+    margin: 0 0.7em;
+    opacity: 0.5;
+  }
+
+  a {
+    font-family: $sans-serif-narrow;
+    text-decoration: none; /* .archive a underlines everything by default */
+    border-bottom: 1px solid transparent;
+
+    &:hover,
+    &:focus {
+      text-decoration: none;
+      border-bottom-color: currentColor;
+    }
+  }
+}

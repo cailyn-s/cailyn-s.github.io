@@ -8,5 +8,5 @@ permalink: /publication/cogsci2022
 excerpt: 'Modeled human linguistic politeness norms with machine learning to predict when robots should use politeness modifiers in different social contexts.'
 date: 2022-01-01
 venue: 'CogSci'
-paperurl: 'https://cailyn.github.io/files/cogsci2022.pdf'
+paperurl: 'https://cailyn-s.github.io/files/cogsci2022.pdf'
 ---

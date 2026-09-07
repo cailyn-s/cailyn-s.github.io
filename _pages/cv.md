@@ -9,4 +9,4 @@ redirect_from:
 
 {% include base_path %}
 
-Find my CV here: [Download PDF]({{ base_path }}/files/cv.pdf)
+Find my CV here: [Download PDF]({{ base_path }}/files/CV_Resume.pdf)

@@ -21,3 +21,9 @@ package-lock.json
 
 # Ignore files created by MacOS
 .DS_Store
+
+# Full-size source videos kept locally only; the web-sized version
+# committed next to each one is what the site actually uses
+*.original.mp4
+
+

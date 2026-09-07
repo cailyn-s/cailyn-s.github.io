@@ -1,0 +1,8 @@
+# Local preview only. _config.yml sets `url` to the live site, and
+# _includes/base_path turns that into absolute URLs for CSS/JS -- so a local
+# server would otherwise load the PUBLISHED stylesheet instead of your own.
+# Serve with:  bundle exec jekyll serve -l -H localhost --config _config.yml,_config.dev.yml
+url: ""
+
+# Marks a local preview build (see _includes/project-media.html)
+dev: true

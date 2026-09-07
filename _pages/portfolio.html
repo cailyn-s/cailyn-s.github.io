@@ -7,8 +7,18 @@ author_profile: true
 
 {% include base_path %}
 
+{% assign projects = site.projects | sort: 'order' %}
 
-{% for post in site.projects %}
-  {% include archive-single.html %}
+<nav class="project-nav" aria-label="Jump to a project">
+  <ul>
+    {% for post in projects %}
+      <li><a href="#{{ post.anchor | default: post.slug }}">{{ post.nav_title | default: post.title }}</a></li>
+    {% endfor %}
+  </ul>
+</nav>
+
+{% for post in projects %}
+  <div class="project-entry" id="{{ post.anchor | default: post.slug }}">
+    {% include archive-single.html %}
+  </div>
 {% endfor %}
-

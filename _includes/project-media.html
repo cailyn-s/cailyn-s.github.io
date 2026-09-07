@@ -1,0 +1,92 @@
+{% comment %}
+  Renders a project's images/videos as rows.
+
+  Front matter on the project (all optional):
+
+    media_dir: bidirectional-communication   # folder under /images/, defaults to `anchor`
+    media:
+      - ["clip-a.mp4", "clip-b.mp4"]         # one row -> items sit side by side
+      - ["diagram.png"]                      # next row -> spans the width
+
+  A row can also be a mapping, to cap how wide the whole row gets:
+
+      - {width: "70%", items: ["clip-a.mp4", "clip-b.mp4"]}
+
+  Each item is either a plain filename or a mapping for extra control:
+
+      - [{src: "clip.mp4", width: "60%", speed: 2, alt: "...", caption: "..."}]
+
+  Other item keys: `gap_after: "2em"` adds space after that item (to visually group
+  a pair within a row); `autoplay: false` makes a clip click-to-play; and
+  `muted: false` keeps the sound — which also turns off autoplay, since browsers
+  refuse to autoplay audio.
+
+  Videos autoplay muted on loop and keep their controls so they can be paused
+  and scrubbed. NOTE: `media_dir` is case-sensitive on GitHub Pages, so it must
+  match the folder on disk exactly (e.g. RL-navigation, not rl-navigation).
+{% endcomment %}
+
+{% assign media_dir = post.media_dir | default: post.anchor %}
+{% comment %}
+  Local preview only: append the build time so the browser can never serve a
+  stale image/video after you replace a file. Production keeps clean URLs and
+  normal caching (site.dev is set in _config.dev.yml).
+{% endcomment %}
+{% if site.dev %}{% capture bust %}?v={{ site.time | date: '%s' }}{% endcapture %}{% else %}{% assign bust = '' %}{% endif %}
+
+{% if post.media %}
+  <div class="project-media">
+    {% for row in post.media %}
+      {% if row.items %}
+        {% assign items = row.items %}
+        {% assign row_width = row.width %}
+      {% else %}
+        {% assign items = row %}
+        {% assign row_width = nil %}
+      {% endif %}
+      <div class="project-media__row"{% if row_width %} style="max-width: {{ row_width }};"{% endif %}>
+        {% for item in items %}
+          {% if item.src %}
+            {% assign file = item.src %}
+          {% else %}
+            {% assign file = item %}
+          {% endif %}
+          {% assign encoded = file | replace: " ", "%20" %}
+          {% capture src %}{{ site.baseurl }}/images/{{ media_dir }}/{{ encoded }}{% endcapture %}
+          {% assign lower = file | downcase %}
+
+          {% capture item_style %}{% if item.width %}flex: 0 1 {{ item.width }};{% endif %}{% if item.gap_after %}margin-right: {{ item.gap_after }};{% endif %}{% endcapture %}
+          <figure class="project-media__item"{% if item_style != "" %} style="{{ item_style }}"{% endif %}>
+            {% if lower contains ".mp4" or lower contains ".webm" or lower contains ".mov" %}
+              {% if lower contains ".webm" %}
+                {% assign mime = "video/webm" %}
+              {% elsif lower contains ".mov" %}
+                {% assign mime = "video/quicktime" %}
+              {% else %}
+                {% assign mime = "video/mp4" %}
+              {% endif %}
+              {% comment %}
+                `autoplay: false` (or `muted: false`, since browsers block autoplay
+                with sound) makes a clip click-to-play: it stays out of the
+                scroll-driven playback entirely, so its own controls fully own it.
+              {% endcomment %}
+              {% if item.autoplay == false or item.muted == false %}
+              <video class="project-media__video" loop{% unless item.muted == false %} muted{% endunless %} playsinline controls preload="metadata"{% if item.speed %} data-speed="{{ item.speed }}"{% endif %}>
+              {% else %}
+              <video class="project-media__video" data-autoplay loop muted playsinline controls preload="metadata"{% if item.speed %} data-speed="{{ item.speed }}"{% endif %}>
+              {% endif %}
+                <source src="{{ src }}{{ bust }}" type="{{ mime }}">
+                Your browser does not support the video tag.
+              </video>
+            {% else %}
+              <img class="project-media__image" src="{{ src }}{{ bust }}" alt="{{ item.alt | default: '' }}" loading="lazy">
+            {% endif %}
+            {% if item.caption %}
+              <figcaption class="project-media__caption">{{ item.caption }}</figcaption>
+            {% endif %}
+          </figure>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

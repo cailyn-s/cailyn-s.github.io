@@ -1,11 +1,83 @@
 <script type="module" src="{{ base_path }}/assets/js/main.min.js"></script>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var videos = document.querySelectorAll('.project-video');
-    videos.forEach(function(video) {
+  document.addEventListener('DOMContentLoaded', function () {
+    // Legacy videos embedded directly in a project excerpt play at 2x.
+    document.querySelectorAll('.project-video').forEach(function (video) {
       video.playbackRate = 2.0;
     });
+
+    function applyRate(v) {
+      var rate = parseFloat(v.dataset.speed);
+      if (!isNaN(rate) && rate > 0) { v.playbackRate = rate; }
+    }
+    document.querySelectorAll('video[data-speed]').forEach(applyRate);
+
+    var auto = document.querySelectorAll('video[data-autoplay]');
+    var manual = document.querySelectorAll('.project-media__video:not([data-autoplay])');
+    var queue = [], draining = false, yielded = false;
+
+    function startOne(v) {
+      if (yielded) { return; }
+      applyRate(v);
+      var p = v.play();
+      if (p && p.catch) { p.catch(function () {}); }
+    }
+
+    function drain() {
+      if (draining) { return; }
+      draining = true;
+      (function next() {
+        var v = queue.shift();
+        if (!v) { draining = false; return; }
+        startOne(v);
+        setTimeout(next, 120);
+      })();
+    }
+
+    // While the viewer is watching a clip they started themselves, stop the
+    // autoplaying ones. Several clips decoding at once is what starves it.
+    function anyManualPlaying() {
+      for (var i = 0; i < manual.length; i++) {
+        if (!manual[i].paused && !manual[i].ended) { return true; }
+      }
+      return false;
+    }
+    manual.forEach(function (v) {
+      v.addEventListener('play', function () {
+        yielded = true;
+        queue.length = 0;
+        auto.forEach(function (a) { if (!a.paused) { a.pause(); } });
+      });
+      ['pause', 'ended'].forEach(function (n) {
+        v.addEventListener(n, function () {
+          if (anyManualPlaying()) { return; }
+          yielded = false;
+          if (io) { auto.forEach(function (a) { io.unobserve(a); io.observe(a); }); }
+        });
+      });
+    });
+
+    var io = null;
+    if ('IntersectionObserver' in window) {
+      io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          var v = e.target;
+          if (e.isIntersecting && !yielded) {
+            if (v.paused && queue.indexOf(v) === -1) { queue.push(v); }
+          } else if (!e.isIntersecting) {
+            var i = queue.indexOf(v);
+            if (i !== -1) { queue.splice(i, 1); }
+            if (!v.paused) { v.pause(); }
+          }
+        });
+        drain();
+      }, { rootMargin: '0px', threshold: 0.2 });
+      auto.forEach(function (v) { io.observe(v); });
+    } else {
+      auto.forEach(function (v) { queue.push(v); });
+      drain();
+    }
   });
 </script>
 
